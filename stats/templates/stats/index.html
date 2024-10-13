@@ -1,0 +1,99 @@
+
+<!doctype html>
+
+{% load static %}
+{% load stats_extras %}
+{% load humanize %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.32.0/js/jquery.tablesorter.min.js"></script>
+
+
+<link rel="stylesheet" href="{% static 'stats/style.css' %}">
+<script src="{% static 'stats/sorter.js' %}"></script>
+
+
+<html lang="en-US">
+    <body>
+        <div class='BigContainer'>
+            <div class="header" style="display: flex;justify-content: space-between;">
+                <div class="tabs" style="display:flex;align-items:center;">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#records">RECORDS</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#standings">STANDINGS</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="checkbuttons" style="justify-content:flex-end;align-items:center;">
+                    <label class="container">Regular Season
+                        <input type="checkbox" checked="checked">
+                        <span class="checkmark"></span>
+                      </label>
+                      
+                      <label class="container">Playoffs
+                        <input type="checkbox" checked="checked">
+                        <span class="checkmark"></span>
+                      </label>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" style="margin-top : 20px;" id="records">
+                    <table class="tablerecords">
+                        <thead>
+                            <tr>
+                            <th></th>
+                            {% for u1, dic2 in record.items %}
+                                <th> <a href = "{% url 'user' league u1%}">{{u1}}</th>
+                            {% endfor %}
+                                </tr>
+                        </thead>
+                        <tbody>
+                        {% for u1, dic2 in record.items %}
+                            <tr>
+                            <th> <a href = "{% url 'user' league u1%}">{{u1}}</a></th>
+                            {% for u2, val in dic2.items %}
+                                {% if u1 == u2 %}
+                                    <td style="background:#222634"></td>
+                                {% else %}
+                                    <td bgcolor= {{val.0|color_filter:val.1}}>{{val.0}} - {{val.1}}</td>
+                                {% endif %}
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}                    
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" style="margin-top : 20px;" id="standings">
+                    <table id="StandingsTable" class="tablesorter">
+                        <thead>
+                            <tr>
+                                <th>Manager</th>
+                                <th>Record</th>
+                                <th>Win %</th>
+                                <th>Total points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u, dic in people.items %}
+                                <tr>
+                                    <td class="manager-col"> <a href = "{% url 'user' league u%}">{{u}} </td>
+                                    <td class="std-col">{{dic.record.0}} - {{dic.record.1}}</td>
+                                    <td class="std-col"> {{dic.percentage|floatformat:2}}%</td>
+                                    <td class="std-col">{{dic.total_points|floatformat:2}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
