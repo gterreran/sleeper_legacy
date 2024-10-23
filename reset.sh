@@ -3,8 +3,8 @@ rm -r db.sqlite3 stats/migrations/*
 python manage.py makemigrations
 python manage.py migrate --run-syncdb
 
-python manage.py add_league chilis
 python manage.py add_league malort
+python manage.py add_league chilis
 
 python manage.py add_season 1115109155943047168 --league malort
 python manage.py add_season 974904445844684800  --league malort

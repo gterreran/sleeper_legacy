@@ -32,15 +32,17 @@
                     </ul>
                 </div>
                 <div class="checkbuttons" style="justify-content:flex-end;align-items:center;">
+                    <form>
                     <label class="container">Regular Season
-                        <input type="checkbox" checked="checked">
+                        <input type="checkbox" checked="checked" name="phase" value="rs" id="rs" onChange="this.form.submit()">
                         <span class="checkmark"></span>
                       </label>
                       
                       <label class="container">Playoffs
-                        <input type="checkbox" checked="checked">
+                        <input type="checkbox" checked="checked" name="phase" value="po" id="po" onChange="this.form.submit()">
                         <span class="checkmark"></span>
                       </label>
+                    </form>
                 </div>
             </div>
             <div class="tab-content">

@@ -1,4 +1,7 @@
 db.sqlite3
 **/__pycache__/
- *.pyc
- ./stat/migrations/*
+*.pyc
+./stat/migrations/*
+static/
+test*
+**.DS_Store

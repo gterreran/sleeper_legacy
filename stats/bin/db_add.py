@@ -1,6 +1,7 @@
 from django.core.management.base import CommandError
-from stats.models import League, Season, User, Username, Matchup
+from stats.models import League, Season, User, Username, Matchup, Roster
 import requests
+import numpy as np
 
 def add_league(league_nickname, output):
     try:
@@ -46,10 +47,11 @@ def add_season(season_id, league_nickname, output):
         season_id = season_id,
         name = season_dict["name"],
         year = season_dict["season"],
-        winner = ""
+        playoff_week_start = season_dict["settings"]["playoff_week_start"]
     )
 
     season.save()
+
     output.write(f"Season {season_id} added to league '{league_nickname}'.")
     output.write(f"Looking for users.")
 
@@ -60,13 +62,29 @@ def add_season(season_id, league_nickname, output):
     for u in user_dict:
         user_id = u["user_id"]
         try:
-            old_user = User.objects.get(user_id=user_id)
+            old_user = User.objects.get(user_id=user_id, league=league)
         except User.DoesNotExist:
             person = input(f"New user found. Please specify a name for {u['display_name']}: ")
 
             new_user = User(
+                league = league,
                 user_id = user_id,
-                person = person 
+                person = person,
+                total_points_rs = 0,
+                total_wins_rs = 0,
+                total_losses_rs = 0,
+                total_points_po = 0,
+                total_wins_po = 0,
+                total_losses_po = 0,
+                highest_scorer = 0,
+                lowest_scorer = 0,
+                highest_score = 0,
+                lowest_score = 1e5,
+                luck_factor = 0,
+                winners_bracket = 0,
+                losers_bracket = 0,
+                champion = 0,
+                losers_bracket_champion = 0
             )
 
             new_user.save()
@@ -87,36 +105,39 @@ def add_season(season_id, league_nickname, output):
                 output.write(f"User with user_id {old_user.user_id} has the new username {username}.")
                 Username.objects.create(user=old_user, username = u["display_name"])
                 output.write(f"New username {username} added to the user.")
+        
+    # In the matchups, the users are represented by their roster_id for the season.
+    # Therefore we need to fetch that roster information too
+
+    url = f"https://api.sleeper.app/v1/league/{season_id}/rosters"
+    rosters_dict = requests.get(url).json()
+    for r in rosters_dict:
+        Roster.objects.create(
+            season = season,
+            roster_id = r['roster_id'],
+            user = User.objects.get(user_id=r['owner_id'], seasons=season)
+        )
+
 
 def add_week(week_list, season_id, output):
     # Checking if the season already exists in the database.
     try:
-        Season.objects.get(season_id=season_id)
+        season = Season.objects.get(season_id=season_id)
     except Season.DoesNotExist:
         raise CommandError(f"Season {season_id} does not exist in the database.")
 
-    # In the matchups, the players are represented by their roster_id for the season.
-    # Therefore we need to fetch that information first
-    # NOTE: Could store this in the database, to reduce sending requests to the Sleeper API?
-    url = f"https://api.sleeper.app/v1/league/{season_id}/rosters"
-    rosters_dict = requests.get(url).json()
-    roster_ids = {}
-    for r in rosters_dict:
-        roster_ids[str(r['roster_id'])] = r['owner_id']
 
     # Fetching matchups
     for w in week_list:
+        weekly_points = []
+        weekly_winners = []
+        weekly_losers = []
         # Checking if the week already exists in the database.
-        if len(Matchup.objects.filter(season=Season.objects.get(season_id=season_id),week=w)) != 0:
+        if len(Matchup.objects.filter(season=season,week=w)) != 0:
              raise CommandError(f"Matchups for week {w} and season {season_id} already ingested.")
-
  
         url = f"https://api.sleeper.app/v1/league/{season_id}/matchups/{w}"
         matchup_dict = requests.get(url).json()
-
-        # Every player is scored independently of who they are playing against.
-        # Therefore we need to store the info following the matchup_id
-        matchups = [[] for _ in range(int(len(matchup_dict)/2))]
 
         # If any team has scored 0 points it is likely that the week is not played/finished yet
         if not all([m['points'] for m in matchup_dict]):
@@ -127,26 +148,180 @@ def add_week(week_list, season_id, output):
         if not any([m['matchup_id'] for m in matchup_dict]):
             output.write(f"Week {w} not played. Skipped")
             continue
-            
-        output.write(f"Reading week {w}.")
+
+        if w < season.playoff_week_start:
+            phase_message = 'Regular season.'
+        else:
+            phase_message = 'Playoffs.'
+
+        output.write(f"Reading week {w}. - {phase_message}")
+
+
+        matchup_list_for_the_week = {}
+
+        highest_scorer = [None,0]
+        lowest_scorer = [None,1e5]
+
         for m in matchup_dict:
-            if m['matchup_id'] != None:
-                # If we are here, it means that there are matchups, and the week is being stored.
-                user = roster_ids[str(m['roster_id'])]
-                user_score = m['points']
-                matchups[m['matchup_id']-1].append([user,user_score]) 
-        
-        
-        for m in matchups:
-            if len(m) == 0: continue
-            output.write(f"{m[0][0]} {m[0][1]} pts.  vs  {m[1][0]} {m[1][1]} pts.")
-            Matchup.objects.create(
-                season = Season.objects.get(season_id=season_id),
-                week = w,
-                user1 = m[0][0],
-                user2 = m[1][0],
-                user1_score = m[0][1],
-                user2_score = m[1][1]
-            )
+            # If the matchup_id is None, it means that the team did not play against anybody that week.
+            # The player still gets a score though.
+            # The matches are not in order, so we need to store each player according to the matchup_id
+
+            matchup_id = m['matchup_id']
+
+            user = Roster.objects.get(roster_id = m['roster_id'], season=season).user
+            user_id = user.user_id
+            user_points = m['points']
+            # Keeping track of all the weekly scoring for the luck factor
+            weekly_points.append(user_points)
+
+            if w < season.playoff_week_start:
+                user.total_points_rs = user.total_points_rs + user_points
+            else:
+                user.total_points_po = user.total_points_po + user_points
+            
+            if user_points > user.highest_score:
+                user.highest_score = user_points
+                user.highest_score_year = season.year
+                user.highest_score_week = w
+            
+            if user_points < user.lowest_score:
+                user.lowest_score = user_points
+                user.lowest_score_year = season.year
+                user.lowest_score_week = w
+
+            user.save()
+
+            # Tracking the lowest and highest scorer of the week.
+            if user_points > highest_scorer[1]:
+                highest_scorer[0] = user
+                highest_scorer[1] = user_points
+            if user_points < lowest_scorer[1]:
+                lowest_scorer[0] = user
+                lowest_scorer[1] = user_points
+
+            if matchup_id != None:
+                if matchup_id not in matchup_list_for_the_week:
+                    matchup_list_for_the_week[matchup_id] = {'u1_id':user_id, 'u1':user, 'u1_score':user_points}
+                else:
+
+                    output.write(f"{matchup_list_for_the_week[matchup_id]['u1'].person} {matchup_list_for_the_week[matchup_id]['u1_score']} pts.  vs  {user.person} {user_points} pts.")
+
+                    if user_points > matchup_list_for_the_week[matchup_id]['u1_score']:
+                        winner = user
+                        winner_id = user_id
+                        winner_score = user_points
+                        loser = matchup_list_for_the_week[matchup_id]['u1']
+                        loser_id = matchup_list_for_the_week[matchup_id]['u1_id']
+                        loser_score = matchup_list_for_the_week[matchup_id]['u1_score']
+
+                    else:
+                        winner = matchup_list_for_the_week[matchup_id]['u1']
+                        winner_id = matchup_list_for_the_week[matchup_id]['u1_id']
+                        winner_score = matchup_list_for_the_week[matchup_id]['u1_score']
+                        loser = user
+                        loser_id = user_id
+                        loser_score = user_points
+
+                    if w < season.playoff_week_start:
+                        winner.total_wins_rs = winner.total_wins_rs + 1
+                        loser.total_losses_rs = loser.total_losses_rs +1
+                    else:
+                        winner.total_wins_po = winner.total_wins_po + 1
+                        loser.total_losses_po = loser.total_losses_po +1
+
+                    winner.save()
+                    loser.save()
+
+                    Matchup.objects.create(
+                        season = season,
+                        week = w,
+                        winner_id = winner_id,
+                        loser_id = loser_id,
+                        winner_score = winner_score,
+                        loser_score = loser_score
+                    )
+
+                    weekly_winners.append([winner_id,winner_score])
+                    weekly_losers.append([loser_id,loser_score])
+
+        # recording the highest scorer of the week
+        highest_scorer[0].highest_scorer = highest_scorer[0].highest_scorer + 1
+        lowest_scorer[0].lowest_scorer = lowest_scorer[0].lowest_scorer + 1
+        highest_scorer[0].save()
+        lowest_scorer[0].save()
+
+        # Recording if a player should have won or not
+        median_weekly = np.median(weekly_points)
+        for w_id, w_s in weekly_winners:
+            if w_s < median_weekly:
+                u = User.objects.get(user_id=w_id, seasons=season)
+                u.luck_factor = u.luck_factor + 1
+                u.save()
+            
+        for l_id, l_s in weekly_losers:
+            if l_s > median_weekly:
+                u = User.objects.get(user_id=l_id, seasons=season)
+                u.luck_factor = u.luck_factor - 1
+                u.save()
         
         output.write(f"Week {w} matchups added to season {season_id}.")
+    
+        # Checking if playoffs have started:
+        if w >= season.playoff_week_start and season.winner is None:
+            # Fetching the winners bracket
+            url = f"https://api.sleeper.app/v1/league/{season_id}/winners_bracket"
+            bracket_dict = requests.get(url).json()
+            rosters_in_bracket = []
+            for m in bracket_dict:
+                roster1 = m['t1']
+                roster2 = m['t2']
+                if roster1 is not None and roster1 not in rosters_in_bracket:
+                    rosters_in_bracket.append(roster1)
+                if roster2 is not None and roster2 not in rosters_in_bracket:
+                    rosters_in_bracket.append(roster2)
+                if "p" in m:
+                    if m["p"]==1: # Match for the title
+                        champion_roster_id = m["w"]
+                        u = Roster.objects.get(roster_id = champion_roster_id, season=season).user
+                        u.champion = u.champion + 1
+                        u.save()
+                        season.winner = u.user_id
+                        season.save()
+
+            # Do not set it True here, otherwise I cannot update the loser bracket.
+            # We'll set it true after updating user's participating in the losers bracket.
+            if not season.playoffs_added:
+                for r in rosters_in_bracket:
+                    u = Roster.objects.get(roster_id = r, season=season).user
+                    u.winners_bracket = u.winners_bracket + 1
+                    u.save()
+
+
+
+            # Fetching the losers bracket
+            url = f"https://api.sleeper.app/v1/league/{season_id}/losers_bracket"
+            bracket_dict = requests.get(url).json()
+            rosters_in_bracket = []
+            for m in bracket_dict:
+                roster1 = m['t1']
+                roster2 = m['t2']
+                if roster1 is not None and roster1 not in rosters_in_bracket:
+                    rosters_in_bracket.append(roster1)
+                if roster2 is not None and roster2 not in rosters_in_bracket:
+                    rosters_in_bracket.append(roster2)
+                if "p" in m:
+                    if m["p"]==1: # Match for the title
+                        champion_roster_id = m["w"]
+                        u = Roster.objects.get(roster_id = champion_roster_id, season=season).user
+                        u.losers_bracket_champion = u.losers_bracket_champion + 1
+                        u.save()
+
+            if not season.playoffs_added:
+                for r in rosters_in_bracket:
+                    u = Roster.objects.get(roster_id = r, season=season).user
+                    u.losers_bracket = u.losers_bracket + 1
+                    u.save()
+                    season.playoffs_added = True
+                    season.save()
+    

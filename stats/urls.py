@@ -1,8 +1,8 @@
 from django.urls import path
-
 from . import views
+from stats.dash_apps.finished_apps import fantasy_table
 
 urlpatterns = [
-    path("<league>", views.index, name="index"),
+    path("<league>", views.tables, name="tables"),
     path("<league>/<user>", views.personal_page, name="user"),
 ]

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
-    'bootstrap5',
+    #'bootstrap5',
+    'channels',
+    'channels_redis',
 ]
 
 # Standard Django middleware with the addition of both
@@ -69,7 +72,7 @@ ROOT_URLCONF = 'fantasy.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,7 +94,7 @@ WSGI_APPLICATION = 'fantasy.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR,'db.sqlite3'),
     }
 }
 
@@ -126,11 +129,28 @@ USE_I18N = True
 
 USE_TZ = True
 
+CRISPY_TEMPLATE_PACK = 'bootstap4'
+
+ASGI_APPLICATION = 'fantasy.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379),],
+        },
+    },
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+# For WhiteNoise -> https://whitenoise.readthedocs.io/en/stable/django.html
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "fantasy/static")
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -140,12 +160,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Enabling the use of frames within HTML documents for django_plotly
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-# For WhiteNoise -> https://whitenoise.readthedocs.io/en/stable/django.html
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
 STORAGES = {
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
@@ -193,6 +210,10 @@ STATICFILES_FINDERS = [
 PLOTLY_COMPONENTS = [
 
     # Common components (ie within dash itself) are automatically added
+
+    'dash_core_components',
+    'dash_html_components',
+    'dash_renderer',
 
     # django-plotly-dash components
     'dpd_components',

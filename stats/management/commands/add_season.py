@@ -18,6 +18,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         add_season(season_id = options["season_id"], league_nickname = options["league"], output = self.stdout)
         if not options["no_matchups"]:
-            add_week(week_list = [str(el) for el in range(1,19)], season_id = options["season_id"], output = self.stdout)
+            add_week(week_list = [el for el in range(1,19)], season_id = options["season_id"], output = self.stdout)
         
         
