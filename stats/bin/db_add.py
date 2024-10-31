@@ -52,6 +52,11 @@ def add_season(season_id, league_nickname, output):
 
     season.save()
 
+    if int(season_dict["season"]) > league.most_recent_year:
+        league.most_recent_year = season_dict["season"]
+        league.avatar = season_dict["avatar"]
+        league.save()
+
     output.write(f"Season {season_id} added to league '{league_nickname}'.")
     output.write(f"Looking for users.")
 

@@ -165,9 +165,11 @@ li + li{
   }
   .checkbuttons input {
     vertical-align: middle;
+    color: inherit !important;
   }
   .checkbuttons label span {
     vertical-align: middle;
+    stroke: inherit !important;
   }
 
 

@@ -3,6 +3,8 @@ from django.db import models
 
 class League(models.Model):
     nickname = models.CharField(max_length=200)
+    avatar = models.CharField(max_length=200)
+    most_recent_year = models.IntegerField(default=0)
 
     def __str__(self):
         return self.nickname
