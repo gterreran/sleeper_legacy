@@ -1,5 +1,6 @@
 from stats.models import League, Season
 from django.shortcuts import render, get_object_or_404
+from stats import TITLE, VERSION, AUTHOR
 
 
 
@@ -8,7 +9,7 @@ def tables(request,league):
     l = League.objects.get(nickname=league)
     years = Season.objects.values_list('year', flat=True).filter(league=l)
     initial_arguments = {'league':{'data':league}}
-    context={'initial_arguments': initial_arguments, 'league': league, 'avatar': l.avatar, 'min_year': min(years), 'max_year': max(years)}
+    context={'title': TITLE, 'version': VERSION, 'author': AUTHOR, 'initial_arguments': initial_arguments, 'league': league, 'avatar': l.avatar, 'min_year': min(years), 'max_year': max(years)}
     return render(request, "stats/tables.html", context)
 
 def personal_page(request, league, user):
