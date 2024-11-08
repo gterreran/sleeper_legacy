@@ -1,0 +1,10 @@
+channels==4.1.0
+colour==0.1.5
+dash_daq==0.5.0
+Django==4.2.16
+django_plotly_dash==2.3.1
+numpy==1.24.4
+Requests==2.32.3
+gunicorn==23.0.0
+psycopg2-binary==2.9.10
+whitenoise==6.7.0
