@@ -16,11 +16,8 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-dp_3u6)oxtgk5+@6z9l_u2@e#lbupw2fnmcp2dir%2-fe3e9$k')
+dj_key = 'django-insecure-dp_3u6)oxtgk5+@6z9l_u2@e#lbupw2fnmcp2dir%2-fe3e9$k'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', dj_key)
 
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
@@ -39,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
-    #'bootstrap5',
+    # 'bootstrap5',
     'channels',
     'channels_redis',
 ]
@@ -90,10 +87,13 @@ WSGI_APPLICATION = 'fantasy.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
+default_db_backhand = "django.db.backends.sqlite3"
+default_db_name = os.path.join(BASE_DIR, 'db.sqlite3')
+
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get("DATABASE_ENGINE", "django.db.backends.sqlite3"),
-        'NAME': os.environ.get('DATABASE_NAME', os.path.join(BASE_DIR,'db.sqlite3')),
+        'ENGINE': os.environ.get("DATABASE_ENGINE", default_db_backhand),
+        'NAME': os.environ.get('DATABASE_NAME', default_db_name),
         'USER': os.environ.get('DATABASE_USER', ''),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
         'HOST': os.environ.get('DATABASE_HOST', ''),
@@ -105,18 +105,20 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
+pwv = 'django.contrib.auth.password_validation'
+
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': f'{pwv}.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': f'{pwv}.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': f'{pwv}.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': f'{pwv}.NumericPasswordValidator',
     },
 ]
 
@@ -172,16 +174,16 @@ STORAGES = {
 PLOTLY_DASH = {
 
     # Route used for the message pipe websocket connection
-    "ws_route" :   "dpd/ws/channel",
+    "ws_route":   "dpd/ws/channel",
 
     # Route used for direct http insertion of pipe messages
-    "http_route" : "dpd/views",
+    "http_route": "dpd/views",
 
     # Flag controlling existince of http poke endpoint
-    "http_poke_enabled" : True,
+    "http_poke_enabled": True,
 
     # Insert data for the demo when migrating
-    "insert_demo_migrations" : False,
+    "insert_demo_migrations": False,
 
     # Timeout for caching of initial arguments in seconds
     "cache_timeout_initial_arguments": 60,

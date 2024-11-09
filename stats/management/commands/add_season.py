@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from stats.bin.db_add import add_season, add_week
 
+
 class Command(BaseCommand):
     help = 'Add season to a league.'
 
@@ -16,8 +17,15 @@ class Command(BaseCommand):
                             default=0, action='store_true')
 
     def handle(self, *args, **options):
-        add_season(season_id = options["season_id"], league_nickname = options["league"], output = self.stdout)
+        add_season(
+            season_id=options["season_id"],
+            league_nickname=options["league"],
+            output=self.stdout)
         if not options["no_matchups"]:
-            add_week(week_list = [el for el in range(1,19)], season_id = options["season_id"], output = self.stdout)
-        
-        
+            add_week(
+                week_list=[
+                    el for el in range(
+                        1,
+                        19)],
+                season_id=options["season_id"],
+                output=self.stdout)
