@@ -277,7 +277,7 @@ def at_load2(*args, **kwargs):
             'seasons': 0,
             'total_points': 0,
             'record': [0, 0]}
-            )
+        )
         if rs:
             st_data[-1]['total_points'] += u.total_points_rs
             st_data[-1]['record'][0] += u.total_wins_rs
