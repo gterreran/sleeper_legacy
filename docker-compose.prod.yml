@@ -13,13 +13,12 @@ services:
     volumes:
     - postgres_data:/var/lib/postgresql/data
   sleeper-legacy-web:
-    build: .
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    build:
+      dockerfile: Dockerfile.prod
+    command: gunicorn fantasy.wsgi:application --bind 0.0.0.0:8000
     container_name: sleeper-legacy-web
-    volumes:
-      - .:/fantasy
-    ports:
-      - "8000:8080"
+    expose:
+      - 8000
     environment:
       - DATABASE_NAME=${DATABASE_NAME}
       - DATABASE_USER=${DATABASE_USER}
@@ -28,6 +27,12 @@ services:
       - DATABASE_PORT=${DATABASE_PORT}
     depends_on:
       - sleeper-legacy-db
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - sleeper-legacy-web
       
 volumes:
   postgres_data:
