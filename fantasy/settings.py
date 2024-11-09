@@ -46,21 +46,21 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
 
-      'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',
 
-      'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 
-      'django.contrib.sessions.middleware.SessionMiddleware',
-      'django.middleware.common.CommonMiddleware',
-      'django.middleware.csrf.CsrfViewMiddleware',
-      'django.contrib.auth.middleware.AuthenticationMiddleware',
-      'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 
-      'django_plotly_dash.middleware.BaseMiddleware',
-      'django_plotly_dash.middleware.ExternalRedirectionMiddleware',
+    'django_plotly_dash.middleware.BaseMiddleware',
+    'django_plotly_dash.middleware.ExternalRedirectionMiddleware',
 
-      'django.middleware.clickjacking.XFrameOptionsMiddleware',
-  ]
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
 
 ROOT_URLCONF = 'fantasy.urls'
 
@@ -174,7 +174,7 @@ STORAGES = {
 PLOTLY_DASH = {
 
     # Route used for the message pipe websocket connection
-    "ws_route":   "dpd/ws/channel",
+    "ws_route": "dpd/ws/channel",
 
     # Route used for direct http insertion of pipe messages
     "http_route": "dpd/views",
