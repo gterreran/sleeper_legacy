@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from stats.dash_apps.finished_apps import fantasy_table
+# from stats.dash_apps.finished_apps import fantasy_table
 
 urlpatterns = [
     path("<league>", views.tables, name="tables"),
