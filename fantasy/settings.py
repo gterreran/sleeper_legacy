@@ -21,8 +21,11 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', dj_key)
 
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['*']
-
+hosts = os.environ.get("DJANGO_ALLOWED_HOSTS")
+if hosts is None:
+    ALLOWED_HOSTS = []
+else:
+    ALLOWED_HOSTS = hosts.split()
 
 # Application definition
 

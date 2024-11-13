@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.8.19-alpine3.20 as builder
+FROM python:3.10.15-alpine3.20 as builder
 
 # set work directory
 RUN mkdir /fantasy
@@ -15,6 +15,7 @@ ENV PYTHONUNBUFFERED 1
 
 # install system dependencies
 RUN apk update && apk add gcc
+RUN apk add --update make automake gcc g++ subversion python3-dev musl-dev
 
 # lint
 RUN pip install --upgrade pip
@@ -33,7 +34,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /fantasy/wheels -r requiremen
 #########
 
 # pull official base image
-FROM python:3.8.19-alpine3.20
+FROM python:3.10.15-alpine3.20
 
 # create directory for the app user
 RUN mkdir -p /home/fantasy
@@ -45,6 +46,7 @@ RUN addgroup --system fantasy && adduser --system fantasy --ingroup fantasy
 ENV HOME=/home/fantasy
 ENV APP_HOME=/home/fantasy/web
 RUN mkdir $APP_HOME
+RUN mkdir $APP_HOME/static
 WORKDIR $APP_HOME
 
 # install dependencies
@@ -54,13 +56,12 @@ COPY --from=builder /fantasy/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
-# copy entrypoint.prod.sh
-COPY ./entrypoint.prod.sh .
-RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.prod.sh
-RUN chmod +x  $APP_HOME/entrypoint.prod.sh
-
 # copy project
 COPY . $APP_HOME
+
+# copy entrypoint.prod.sh
+RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.prod.sh
+RUN chmod +x  $APP_HOME/entrypoint.prod.sh
 
 # chown all the files to the app user
 RUN chown -R fantasy:fantasy $APP_HOME

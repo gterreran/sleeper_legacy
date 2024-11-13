@@ -2,16 +2,10 @@ version: '3.8'
 
 services:
   sleeper-legacy-web:
-    build:
-      dockerfile: Dockerfile.prod
-    command: gunicorn fantasy.wsgi:application --bind 0.0.0.0:8000
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - static_volume:/home/fantasy/web/static
-    container_name: sleeper-legacy-web
-    # ports:
-    #   - 8000:8000
-    expose:
-      - 8000
+      - .:/fantasy/
     environment:
       - DATABASE=${DATABASE}
       - DATABASE_ENGINE=${DATABASE_ENGINE}
@@ -22,26 +16,15 @@ services:
       - DATABASE_PORT=${DATABASE_PORT}
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
-    depends_on:
-      - sleeper-legacy-db
+    ports:
+      - 8000:8000
   sleeper-legacy-db:
     image: postgres:15
-    container_name: sleeper-legacy-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
     environment:
      - POSTGRES_DB=${DATABASE_NAME}
      - POSTGRES_USER=${DATABASE_USER}
      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-    volumes:
-    - postgres_data:/var/lib/postgresql/data
-  nginx:
-    build: ./nginx
-    volumes:
-      - static_volume:/home/fantasy/web/static
-    ports:
-      - 1337:80
-    depends_on:
-      - sleeper-legacy-web
-      
 volumes:
   postgres_data:
-  static_volume:

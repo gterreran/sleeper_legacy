@@ -33,7 +33,7 @@ def debug():
 app = DjangoDash('fantasy_table')
 # app = Dash(__name__)
 
-app.css.append_css({"external_url": "/static/css/sb-admin-2.min.css"})
+app.css.append_css({"external_url": "/static/css/style.css"})
 
 tabs_container_styles = {"width": "49%", "display": "inline-block"}
 
