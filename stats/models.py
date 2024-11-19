@@ -12,7 +12,7 @@ class League(models.Model):
 
 class Season(models.Model):
     league = models.ForeignKey(League, on_delete=models.CASCADE)
-    season_id = models.IntegerField()
+    season_id = models.BigIntegerField()
     name = models.CharField(max_length=200)
     year = models.IntegerField()
     playoff_week_start = models.IntegerField()
@@ -26,7 +26,7 @@ class Season(models.Model):
 class User(models.Model):
     league = models.ForeignKey(League, on_delete=models.CASCADE)
     seasons = models.ManyToManyField(Season)
-    user_id = models.IntegerField()
+    user_id = models.BigIntegerField()
     person = models.CharField(max_length=200)
     total_points_rs = models.FloatField()
     total_wins_rs = models.IntegerField()
@@ -54,7 +54,7 @@ class User(models.Model):
 
 class Roster(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
-    roster_id = models.IntegerField()
+    roster_id = models.BigIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
