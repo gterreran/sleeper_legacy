@@ -34,8 +34,8 @@ class User(models.Model):
     total_points_po = models.FloatField()
     total_wins_po = models.IntegerField()
     total_losses_po = models.IntegerField()
-    highest_scorer = models.IntegerField()
-    lowest_scorer = models.IntegerField()
+    highest_scorer = models.BigIntegerField()
+    lowest_scorer = models.BigIntegerField()
     highest_score = models.FloatField()
     highest_score_year = models.IntegerField(null=True)
     highest_score_week = models.IntegerField(null=True)
@@ -66,8 +66,8 @@ class Username(models.Model):
 class Matchup(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     week = models.IntegerField()
-    winner_id = models.IntegerField()
-    loser_id = models.IntegerField()
+    winner_id = models.BigIntegerField()
+    loser_id = models.BigIntegerField()
     winner_score = models.FloatField()
     loser_score = models.FloatField()
 
