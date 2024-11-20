@@ -12,12 +12,12 @@ class League(models.Model):
 
 class Season(models.Model):
     league = models.ForeignKey(League, on_delete=models.CASCADE)
-    season_id = models.BigIntegerField()
+    season_id = models.CharField(max_length=25)
     name = models.CharField(max_length=200)
     year = models.IntegerField()
     playoff_week_start = models.IntegerField()
     playoffs_added = models.BooleanField(default=False)
-    winner = models.IntegerField(null=True)
+    winner = models.BigIntegerField(null=True)
 
     def __str__(self):
         return f"{self.league.nickname} - {self.year}"
@@ -26,7 +26,7 @@ class Season(models.Model):
 class User(models.Model):
     league = models.ForeignKey(League, on_delete=models.CASCADE)
     seasons = models.ManyToManyField(Season)
-    user_id = models.BigIntegerField()
+    user_id = models.CharField(max_length=25)
     person = models.CharField(max_length=200)
     total_points_rs = models.FloatField()
     total_wins_rs = models.IntegerField()
@@ -34,8 +34,8 @@ class User(models.Model):
     total_points_po = models.FloatField()
     total_wins_po = models.IntegerField()
     total_losses_po = models.IntegerField()
-    highest_scorer = models.BigIntegerField()
-    lowest_scorer = models.BigIntegerField()
+    highest_scorer = models.IntegerField()
+    lowest_scorer = models.IntegerField()
     highest_score = models.FloatField()
     highest_score_year = models.IntegerField(null=True)
     highest_score_week = models.IntegerField(null=True)
@@ -54,7 +54,7 @@ class User(models.Model):
 
 class Roster(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
-    roster_id = models.BigIntegerField()
+    roster_id = models.CharField(max_length=25)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
@@ -66,8 +66,8 @@ class Username(models.Model):
 class Matchup(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     week = models.IntegerField()
-    winner_id = models.BigIntegerField()
-    loser_id = models.BigIntegerField()
+    winner_id = models.CharField(max_length=25)
+    loser_id = models.CharField(max_length=25)
     winner_score = models.FloatField()
     loser_score = models.FloatField()
 
