@@ -64,7 +64,7 @@ services:
       - acme:/etc/acme.sh
     environment:
       - DEFAULT_EMAIL=${DEFAULT_EMAIL}
-      - ACME_CA_URI=${ACME_CA_URI}
+    #  - ACME_CA_URI=${ACME_CA_URI}
       - NGINX_PROXY_CONTAINER=${NGINX_PROXY_CONTAINER}
     depends_on:
       - nginx-proxy

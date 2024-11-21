@@ -1,3 +1,8 @@
+psql postgresql://$DATABASE_USER:$DATABASE_PASSWORD:$DATABASE_PORT/$DATABASE_NAME -c "DROP OWNED BY webapp;"
+docker exec -it sleeper-legacy-web rm /home/fantasy/web/stats/migrations/0*py
+docker exec -it sleeper-legacy-web rm -r /home/fantasy/web/stats/migrations/__pycache__
+
+
 docker-compose -f docker-compose.prod.yml exec sleeper-legacy-web python manage.py makemigrations
 docker-compose -f docker-compose.prod.yml exec sleeper-legacy-web python manage.py migrate --run-syncdb
 
