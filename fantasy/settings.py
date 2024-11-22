@@ -234,6 +234,6 @@ PLOTLY_COMPONENTS = [
 
 # The following is for production
 
-if origins := os.environ.get("CSRF_TRUSTED_ORIGINS") is not None:
+if (origins := os.environ.get("CSRF_TRUSTED_ORIGINS")) is not None:
     CSRF_TRUSTED_ORIGINS = origins.split(" ")
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
