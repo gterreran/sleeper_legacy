@@ -2,8 +2,10 @@ from stats.models import League, Season
 from django.shortcuts import render, get_object_or_404
 from stats import TITLE, VERSION, AUTHOR
 
+
 def home(request):
     return render(request, 'stats/home.html', {})
+
 
 def tables(request, league):
     # This dictionary passes league to the 'league' component in the dash app

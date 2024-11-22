@@ -232,5 +232,8 @@ PLOTLY_COMPONENTS = [
     'dash_bootstrap_components',
 ]
 
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
+# The following is for production
+
+if origins := os.environ.get("CSRF_TRUSTED_ORIGINS") is not None:
+    CSRF_TRUSTED_ORIGINS = origins.split(" ")
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

@@ -1,6 +1,7 @@
-db.sqlite3
 **/__pycache__/
 *.pyc
 stats/migrations/0*py
 /static/
 **.DS_Store
+reset.sh
+reset_docker.sh
