@@ -17,7 +17,7 @@ class Season(models.Model):
     year = models.IntegerField()
     playoff_week_start = models.IntegerField()
     playoffs_added = models.BooleanField(default=False)
-    winner = models.BigIntegerField(null=True)
+    winner = models.CharField(max_length=25)
 
     def __str__(self):
         return f"{self.league.nickname} - {self.year}"
