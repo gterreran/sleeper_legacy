@@ -24,7 +24,7 @@ class Command(BaseCommand):
         if options["week_list"] is None:
             if options['all']:
                 options["week_list"] = ','.join(
-                    [str(el) for el in range(1, 19)])
+                    [int(el) for el in range(1, 19)])
             else:
                 self.stdout.write(
                     'ERROR - A week, or a comma-separated list of '
@@ -33,6 +33,6 @@ class Command(BaseCommand):
                 exit()
 
         add_week(
-            week_list=options["week_list"].split(','),
+            week_list=[int(el) for el in options["week_list"].split(',')],
             season_id=options["season"],
             output=self.stdout)
