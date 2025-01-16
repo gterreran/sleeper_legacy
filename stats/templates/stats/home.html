@@ -1,5 +1,16 @@
+{% extends 'base_no_bars.html' %}
 {% load static %}
-<div>
-    <img src="{% static 'img/Logo.svg' %}"
-                    alt="...">
+{% block content %}
+<h1 class="sidebar-brand-text mx-3" style="text-align:center; font-size: 500%; margin-top: 20px; margin-bottom: 20px; color:#F3EEDE"> Sleeper Legacy
+</h1>
+<img src="{% static 'img/Logo.svg' %}"
+        alt="..." style="display: block; margin-left: auto; margin-right: auto; width: 30%;">
+<div class = "homepage-log-buttons" style="display: flex; justify-content: center;">
+    <a class="empty-button" href="/login">
+        Log In
+    </a>
+    <a href="/signup" class="full-button">
+        Sign Up
+    </a>
 </div>
+{% endblock %}

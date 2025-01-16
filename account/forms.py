@@ -1,0 +1,58 @@
+from django.contrib.auth.forms import AuthenticationForm, UsernameField, UserCreationForm
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
+from django import forms
+from .models import SLUser
+
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+def validate_sleeper_username(sleeper_username):
+    import requests
+    # Need to check if sleeper username exists.
+    url = f"https://api.sleeper.app/v1/user/{sleeper_username}"
+    print(url)
+    # Check if the season exists in Sleeper.
+    user_dict = requests.get(url).json()
+    print(user_dict)
+    if user_dict is None:
+        raise ValidationError(
+            _('Username not find in Sleeper.'),
+            code='invalid_username'
+        )
+
+
+class UserLoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(UserLoginForm, self).__init__(*args, **kwargs)
+
+    username = UsernameField(widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'me', 'id': 'hello'}))
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'something',
+            'id': 'hi',
+        }
+))
+    
+class UserSignupForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
+
+    # def save(self, commit=True):
+    #     if not commit:
+    #         raise NotImplementedError("Can't create User and SLUser without database save")
+    #     user = super(UserSignupForm, self).save(commit=True)
+    #     sluser  = SLUser(user=user, sleeper_username=self.cleaned_data['sleeper_id'])
+    #     sluser.save()
+    #     return user, sluser
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        validate_sleeper_username(username)
+        return username

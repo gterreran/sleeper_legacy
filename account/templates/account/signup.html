@@ -1,0 +1,85 @@
+{% extends 'base_no_bars.html' %}
+{% load static %}
+{% block content %}
+
+<div class="big-box-container">
+    <div class="top-container">
+        <div class="top-main-text">
+            <div class="title-text">Sign up</div>
+            <div class="extra-text">Login</div>
+        </div>
+        <div class="description-text">Create an account to store all your Sleeper leagues.</div>
+    </div>
+    <div class="signup-container">
+        <form method="post">
+            {% csrf_token %}
+            {% if form.username.errors %}
+            <div class="signup-input-box error">
+            {% else %}
+            <div class="signup-input-box">
+            {% endif %}
+                <label>sleeper username</label>
+                <div class="input-div">
+                    {{ form.username }}
+                </div>
+                {% if form.username.errors %}
+                <div class="input-message">
+                    {{ form.username.errors.0 }}
+                </div>
+                {% endif %}
+            </div>
+            {% if form.email.errors %}
+            <div class="signup-input-box error">
+            {% else %}
+            <div class="signup-input-box">
+            {% endif %}
+                <label>email</label>
+                <div class="input-div">
+                    {{ form.email }}
+                </div>
+                {% if form.email.errors %}
+                <div class="input-message">
+                    {{ form.email.errors.0 }}
+                </div>
+                {% endif %}
+            </div>
+            {% if form.password.errors %}
+            <div class="signup-input-box error">
+            {% else %}
+            <div class="signup-input-box">
+            {% endif %}
+                <label>password</label>
+                <div class="input-div">
+                    {{ form.password }}
+                    <div class="password-toggle">
+                        <i class="fa fa-eye"></i>
+                    </div>
+                </div>
+                {% if form.password.errors %}
+                <div class="input-message">
+                    {{ form.password.errors.0 }}
+                </div>
+                {% endif %}
+            </div>
+            <div style="margin-left: 20px;">
+                <div class="password-rules-container ">
+                    <div class="password-rules-text ">
+                        <img src="https://sleepercdn.com/images/v2/icons/check.png">must not be too similar to the username, email, or sleeper ID
+                    </div>
+                    <div class="password-rules-text ">
+                        <img src="https://sleepercdn.com/images/v2/icons/check.png">must not be among a list of common passwords
+                    </div>
+                    <div class="password-rules-text ">
+                        <img src="https://sleepercdn.com/images/v2/icons/check.png">must not be entirely numeric
+                    </div>
+                    <div class="password-rules-text ">
+                        <img src="https://sleepercdn.com/images/v2/icons/check.png">have at least 8 characters
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="full-button">Sign Up</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

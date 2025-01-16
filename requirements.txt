@@ -11,3 +11,4 @@ whitenoise==6.7.0
 channels-redis==4.2.0
 dash_renderer==1.9.1
 dpd_static_support==0.0.5
+argon2-cffi
