@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 
-from .forms import UserSignupForm
+from .forms import UserLoginForm, UserSignupForm
 
 def userlogin(request):
     if request.method == 'POST':
-        user = authenticate(request, username=request.POST["username"],
-                            password=request.POST["password"],
+        form = UserLoginForm(request.POST)
+        user = authenticate(request, username=form["username"],
+                            password=form["password"],
                             backend='account.authentication.ExtendedAuthBackend')
         if user:
             login(request, user)
@@ -26,3 +27,6 @@ def usersignup(request):
     else:
         form = UserSignupForm()
     return render(request, 'account/signup.html', {'form': form})
+
+def forgotpassword(request):
+    return render(request, 'account/forgotpassword.html')

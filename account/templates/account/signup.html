@@ -1,23 +1,27 @@
-{% extends 'base_no_bars.html' %}
+{% extends 'base_loggedout.html' %}
 {% load static %}
 {% block content %}
 
 <div class="top-container">
     <div class="top-main-text">
-        <div class="title-text">Sign up</div>
+        <div class="title-text">
+            Sign up
+        </div>
         <div class="extra-text">
             <a href="{% url 'login' %}">Login</a>
         </div>
     </div>
-    <div class="description-text">Create an account to store all your Sleeper leagues.</div>
+    <div class="description-text">
+        Create an account to store all your Sleeper leagues.
+    </div>
 </div>
-<div class="signup-container">
+<div class="form-container">
     <form method="post">
         {% csrf_token %}
         {% if form.username.errors %}
-        <div class="signup-input-box error">
+        <div class="form-input-box error">
         {% else %}
-        <div class="signup-input-box">
+        <div class="form-input-box">
         {% endif %}
             <label>sleeper username</label>
             <div class="input-div">
@@ -30,9 +34,9 @@
             {% endif %}
         </div>
         {% if form.email.errors %}
-        <div class="signup-input-box error">
+        <div class="form-input-box error">
         {% else %}
-        <div class="signup-input-box">
+        <div class="form-input-box">
         {% endif %}
             <label>email</label>
             <div class="input-div">
@@ -49,11 +53,10 @@
                 The email will be used only in case you forget your password.
             </div>
         </div>
-
         {% if form.password.errors %}
-        <div class="signup-input-box error">
+        <div class="form-input-box error">
         {% else %}
-        <div class="signup-input-box">
+        <div class="form-input-box">
         {% endif %}
             <label>password</label>
             <div class="input-div">
@@ -84,7 +87,9 @@
                 </div>
             </div>
         </div>
-        <button type="submit" class="full-button">Sign Up</button>
+        <div class="bottom-container">
+            <button type="submit" class="full-button">Sign Up</button>
+        </div>
     </form>
 </div>
 
