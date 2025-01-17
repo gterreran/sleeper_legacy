@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from django import forms
-from .models import SLUser
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -43,14 +42,6 @@ class UserSignupForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'password')
-
-    # def save(self, commit=True):
-    #     if not commit:
-    #         raise NotImplementedError("Can't create User and SLUser without database save")
-    #     user = super(UserSignupForm, self).save(commit=True)
-    #     sluser  = SLUser(user=user, sleeper_username=self.cleaned_data['sleeper_id'])
-    #     sluser.save()
-    #     return user, sluser
 
     def clean_username(self):
         username = self.cleaned_data['username']

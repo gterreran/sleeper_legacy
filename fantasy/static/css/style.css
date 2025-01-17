@@ -155,10 +155,6 @@ button {
     text-transform: none;
 }
 
-[type=button], button {
-    -webkit-appearance: button;
-}
-
 [type=button]:not(:disabled), button:not(:disabled) {
     cursor: pointer;
 }
@@ -1068,14 +1064,13 @@ a:visited {
 .big-box-container {
     font-family: 'Lato', Arial, Helvetica, sans-serif;
     color: #F3EEDE;
-    display: block;
+    display: inline-block;
     padding: 100px 130px 130px 130px;
-    flex-grow: 1;
-    margin: auto;
     max-width: 700px;
     background: #2B3140;
     border-radius: 25px;
-    margin-top: 50px;
+    margin-top: 20px;
+    margin-right: 0;
     border: 2px solid #3C4659;
 }
 
@@ -1161,8 +1156,12 @@ a:visited {
 }
 
 .input-div {
-    padding-right: 46px;
-    box-shadow: 0 9px 10px 0 rgba(2,32,71,0.1);
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    border-radius: 2px;
 }
 
 .signup-input-box > .input-div > input {
@@ -1180,18 +1179,6 @@ a:visited {
     width: 100%;
 }
 
-.signup-input-box .input-div .signup-message {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 40px;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .signup-input-box-error {
     color: #ff2b6d;
 }
@@ -1203,6 +1190,46 @@ a:visited {
     line-height: 20px;
     margin-top: 7px;
     white-space: nowrap;
+}
+
+.password-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    cursor: pointer;
+    background: #fff;
+}
+
+.fa {
+    display: inline-block;
+    text-rendering: auto;
+}
+
+.title-sleeper-legacy-small {
+    font-weight: bold;
+    text-align: center;
+    font-size: 200%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: #F3EEDE;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.logo-small > img{
+    margin-left: auto;
+    margin-right: auto;
+    width: 35%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.side-container {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 30px;
+    margin-left: 10px;
 }
 
 /*! CSS Used fontfaces */

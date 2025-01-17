@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
-from .models import SLUser
 from django.contrib.auth.backends import BaseBackend
 
 class ExtendedAuthBackend(BaseBackend):
     """
-    Authenticate using username, e-mail address or sleeper_id
+    Authenticate using username or e-mail address
     """
     def authenticate(self, request, username=None, password=None):
         try:
@@ -13,10 +12,7 @@ class ExtendedAuthBackend(BaseBackend):
             try:
                 user = User.objects.get(email=username)
             except User.DoesNotExist:
-                try:
-                    user = SLUser.objects.get(sleeper_id=username).user
-                except User.DoesNotExist:
-                    return None
+                return None
 
         if user.check_password(password):
             return user
