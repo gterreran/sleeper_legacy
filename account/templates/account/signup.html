@@ -53,21 +53,21 @@
                 The email will be used only in case you forget your password.
             </div>
         </div>
-        {% if form.password.errors %}
+        {% if form.password1.errors %}
         <div class="form-input-box error">
         {% else %}
         <div class="form-input-box">
         {% endif %}
             <label>password</label>
             <div class="input-div">
-                {{ form.password }}
+                {{ form.password1 }}
                 <div class="password-toggle">
                     <i class="fa fa-eye-slash" id="togglePassword"></i>
                 </div>
             </div>
-            {% if form.password.errors %}
+            {% if form.password1.errors %}
             <div class="input-message">
-                {{ form.password.errors.0 }}
+                {{ form.password1.errors.0 }}
             </div>
             {% endif %}
         </div>
@@ -86,6 +86,24 @@
                     <img src="https://sleepercdn.com/images/v2/icons/check.png">have at least 8 characters
                 </div>
             </div>
+        </div>
+        {% if form.password2.errors %}
+        <div class="form-input-box error">
+        {% else %}
+        <div class="form-input-box">
+        {% endif %}
+            <label>retype password</label>
+            <div class="input-div">
+                {{ form.password2 }}
+                <div class="password-toggle">
+                    <i class="fa fa-eye-slash" id="togglePassword"></i>
+                </div>
+            </div>
+            {% if form.password2.errors %}
+            <div class="input-message">
+                {{ form.password2.errors.0 }}
+            </div>
+            {% endif %}
         </div>
         <div class="bottom-container">
             <button type="submit" class="full-button">Sign Up</button>

@@ -140,6 +140,8 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
