@@ -7,16 +7,16 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-def validate_sleeper_username(sleeper_username):
-    import requests
-    # Need to check if sleeper username exists.
-    url = f"https://api.sleeper.app/v1/user/{sleeper_username}"
-    user_dict = requests.get(url).json()
-    if user_dict is None:
-        raise ValidationError(
-            _('Username not find in Sleeper.'),
-            code='invalid_username'
-        )
+# def validate_sleeper_username(sleeper_username):
+#     import requests
+#     # Need to check if sleeper username exists.
+#     url = f"https://api.sleeper.app/v1/user/{sleeper_username}"
+#     user_dict = requests.get(url).json()
+#     if user_dict is None:
+#         raise ValidationError(
+#             _('Username not find in Sleeper.'),
+#             code='invalid_username'
+#         )
     
 class UserSignupForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -25,10 +25,19 @@ class UserSignupForm(UserCreationForm):
         model = User
         fields = ('username', 'email', 'password1', 'password2')
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        validate_sleeper_username(username)
-        return username
+    # def clean_username(self):
+    #     username = self.cleaned_data['username']
+    #     validate_sleeper_username(username)
+    #     return username
+
+    def clean_email(self):
+       email = self.cleaned_data.get('email')
+       if User.objects.filter(email=email).exists():
+            raise ValidationError(
+                _('Email already associated with an existing account.'),
+                code='invalid_email'
+            )
+       return email
 
 class ForgottenPasswordForm(forms.Form):
     email = forms.EmailField(required=True)

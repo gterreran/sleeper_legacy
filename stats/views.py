@@ -1,6 +1,7 @@
 from stats.models import League, Season
 from django.shortcuts import render, get_object_or_404
 from stats import TITLE, VERSION, AUTHOR
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -25,8 +26,7 @@ def tables(request, league):
     return render(request, "stats/tables.html", context)
 
 
-def personal_page(request, league, user):
-    league_table = get_object_or_404(League, nickname=league)
-    seasons = Season.objects.filter(league=league_table)
-    context = {'user': user, 'league': league, 'season': seasons}
+@login_required
+def profile(request):
+    context = {'user':request.user.username}
     return render(request, "stats/user.html", context)

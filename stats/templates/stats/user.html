@@ -1,6 +1,10 @@
-<html>
-    <body>
-        {{user}} - {{league}}
-        <p>Place holder</p>
-    </body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+{{ user }}
+<a href="{% url 'logout' %}" class="full-button">
+    Logout
+</a>
+
+{% endblock %}

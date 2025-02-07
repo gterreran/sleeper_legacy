@@ -9,5 +9,5 @@ urlpatterns = [
     path('', lambda request: redirect('home')), 
     path("home/", views.home, name="home"),
     path("league/<league>", views.tables, name="tables"),
-    path("league/<league>/<user>", views.personal_page, name="user"),
+    path("profile/", views.profile, name="profile"),
 ]

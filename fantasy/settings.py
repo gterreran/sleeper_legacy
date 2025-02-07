@@ -105,12 +105,7 @@ DATABASES = {
     }
 }
 
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'account.authentication.ExtendedAuthBackend',
-]
-
+LOGIN_URL = 'login'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -140,7 +135,14 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
+PASSWORD_RESET_TIMEOUT = 10800 # 3 hours
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

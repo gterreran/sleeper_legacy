@@ -5,7 +5,7 @@ class ExtendedAuthBackend(BaseBackend):
     """
     Authenticate using username or e-mail address
     """
-    def authenticate(self, request, username=None, password=None):
+    def authenticate(request, username=None, password=None):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
@@ -19,7 +19,7 @@ class ExtendedAuthBackend(BaseBackend):
         else:
             return None
     
-    def get_user(self, user_id):
+    def get_user(user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
