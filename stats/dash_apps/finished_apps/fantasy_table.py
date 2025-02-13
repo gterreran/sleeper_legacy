@@ -2,23 +2,21 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
 from django_plotly_dash import DjangoDash
-from dash import dash_table, no_update  # , Dash
+from dash import dash_table, no_update
 import dash_daq as daq
 import inspect
 from colour import Color
-from stats.models import League, Season, User, Matchup
+from stats.models import League, Season, SleeperUser, Matchup
 from django.shortcuts import get_object_or_404
 
 
 green = Color("green")
 red = Color("red")
 
-# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
 
 def debug():
     '''
-    This is just for debuggin purposes.
+    This is just for debugging purposes.
     It prints the function in which it is called,
     and the line at which it is called.
     '''
@@ -161,7 +159,7 @@ def at_load2(*args, **kwargs):
 
     l = get_object_or_404(League, nickname=league)
     seasons = Season.objects.filter(league=l)
-    users = User.objects.filter(seasons__in=seasons).distinct()
+    users = SleeperUser.objects.filter(seasons__in=seasons).distinct()
 
     people = users.values_list('person', flat=True)
 
@@ -170,15 +168,15 @@ def at_load2(*args, **kwargs):
     for s in seasons:
         for m in Matchup.objects.filter(season=s):
             if m.week < s.playoff_week_start and rs:
-                winner = User.objects.get(
-                    user_id=m.winner_id, seasons=s).person
-                loser = User.objects.get(user_id=m.loser_id, seasons=s).person
+                winner = SleeperUser.objects.get(
+                    sleeper_userid=m.winner_id, seasons=s).person
+                loser = SleeperUser.objects.get(sleeper_userid=m.loser_id, seasons=s).person
                 record[winner][loser][0] += 1
                 record[loser][winner][1] += 1
             elif m.week >= s.playoff_week_start and po:
-                winner = User.objects.get(
-                    user_id=m.winner_id, seasons=s).person
-                loser = User.objects.get(user_id=m.loser_id, seasons=s).person
+                winner = SleeperUser.objects.get(
+                    sleeper_userid=m.winner_id, seasons=s).person
+                loser = SleeperUser.objects.get(sleeper_userid=m.loser_id, seasons=s).person
                 record[winner][loser][0] += 1
                 record[loser][winner][1] += 1
 
@@ -303,7 +301,7 @@ def at_load2(*args, **kwargs):
             f'- {st_data[i]["record"][1]}'
 
     for s in seasons:
-        for u in s.user_set.all():
+        for u in s.sleeperuser_set.all():
             for i, row in enumerate(st_data):
                 if row['manager'] == markdown_link(u.person, league):
                     st_data[i]['seasons'] += 1

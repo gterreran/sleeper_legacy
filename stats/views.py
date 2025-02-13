@@ -1,10 +1,14 @@
 from stats.models import League, Season
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect
 from stats import TITLE, VERSION, AUTHOR
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
+from .forms import NewSleeperUserForm
 
 def home(request):
+    if request.user.is_authenticated:
+        return redirect('profile')
     return render(request, 'stats/home.html', {})
 
 
@@ -30,3 +34,15 @@ def tables(request, league):
 def profile(request):
     context = {'user':request.user.username}
     return render(request, "stats/user.html", context)
+
+def add_sleeper_user(request):
+    if request.method == 'POST':
+        form = NewSleeperUserForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data.get("user_dict"))
+            return redirect('profile')
+        else:
+            messages.error(request, 'Something went wrong')
+    else:
+        form = NewSleeperUserForm()
+    return render(request, "stats/add_sleeper_user.html", {'form': form})

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<div class="top-container">
+    <div class="top-main-text">
+        <div class="title-text">
+            Add Sleeper User
+        </div>
+        <div class="extra-text">
+            <a href="{% url 'profile' %}">Back</a>
+        </div>
+    </div>
+    <div class="description-text">
+        Add a new Sleeper User to your profile
+    </div>
+</div>
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="input-message">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+        {% if form.sleeper_username.errors %}
+        <div class="form-input-box error">
+        {% else %}
+        <div class="form-input-box">
+        {% endif %}
+            <label>Sleeper Username</label>
+            <div class="input-div">
+                {{ form.sleeper_username }}
+            </div>
+            {% if form.sleeper_username.errors %}
+            <div class="input-message">
+                {{ form.sleeper_username.errors.0 }}
+            </div>
+            {% endif %}
+        </div>
+        {% if form.sleeper_userid.errors %}
+        <div class="form-input-box error">
+        {% else %}
+        <div class="form-input-box">
+        {% endif %}
+            <label>Sleeper User ID</label>
+            <div class="input-div">
+                {{ form.sleeper_userid }}
+            </div>
+            {% if form.sleeper_userid.errors %}
+            <div class="input-message">
+                {{ form.sleeper_userid.errors.0 }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="bottom-container">
+            <button type="submit" class="full-button">Add</button>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-# from django.contrib import messages
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from account.authentication import ExtendedAuthBackend
 #from django.contrib.auth.models import User
@@ -13,9 +13,14 @@ def usersignup(request):
         form = UserSignupForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'account/success.html')
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user =  ExtendedAuthBackend.authenticate(request,username=username, password=password)
+            if user:
+                login(request, user)
+                return redirect('profile')
         else:
-            print('something went wrong')
+            messages.error(request, 'Something went wrong')
     else:
         form = UserSignupForm()
     return render(request, 'account/signup.html', {'form': form})
@@ -29,10 +34,9 @@ def userlogin(request):
                             password=request.POST["password"])
         if user is not None:
             login(request, user)
-            # messages.success(request, 'Logged in successfully')
             return redirect('profile')
-        # else:
-        #     messages.error(request, 'Logged in Fail')
+        else:
+            messages.error(request, 'Log in Fail')
     else:
         form = AuthenticationForm()
     return render(request, "account/login.html", {'form': form})

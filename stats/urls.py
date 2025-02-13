@@ -10,4 +10,5 @@ urlpatterns = [
     path("home/", views.home, name="home"),
     path("league/<league>", views.tables, name="tables"),
     path("profile/", views.profile, name="profile"),
+    path("add_sleeper_user/", views.add_sleeper_user, name="add_sleeper_user")
 ]

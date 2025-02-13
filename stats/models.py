@@ -1,5 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class League(models.Model):
     nickname = models.CharField(max_length=200)
@@ -23,10 +26,12 @@ class Season(models.Model):
         return f"{self.league.nickname} - {self.year}"
 
 
-class User(models.Model):
+class SleeperUser(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    sleeper_username = models.CharField(max_length=25)
+    sleeper_userid = models.CharField(max_length=25)
     league = models.ForeignKey(League, on_delete=models.CASCADE)
     seasons = models.ManyToManyField(Season)
-    user_id = models.CharField(max_length=25)
     person = models.CharField(max_length=200)
     total_points_rs = models.FloatField()
     total_wins_rs = models.IntegerField()
@@ -43,7 +48,7 @@ class User(models.Model):
     lowest_score_year = models.IntegerField(null=True)
     lowest_score_week = models.IntegerField(null=True)
     luck_factor = models.FloatField()
-    winners_bracket = models.IntegerField()
+    winners_bracket = models.IntegerField(null=True)
     losers_bracket = models.IntegerField()
     champion = models.IntegerField()
     losers_bracket_champion = models.IntegerField()
@@ -55,11 +60,11 @@ class User(models.Model):
 class Roster(models.Model):
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     roster_id = models.CharField(max_length=25)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    sleeperuser = models.ForeignKey(SleeperUser, on_delete=models.CASCADE)
 
 
 class Username(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    sleeperuser = models.ForeignKey(SleeperUser, on_delete=models.CASCADE)
     username = models.CharField(max_length=200)
 
 
