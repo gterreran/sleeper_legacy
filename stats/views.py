@@ -32,7 +32,7 @@ def tables(request, league):
 
 @login_required
 def profile(request):
-    context = {'user':request.user.username}
+    context = {'user':request.user}
     return render(request, "stats/user.html", context)
 
 def add_sleeper_user(request):

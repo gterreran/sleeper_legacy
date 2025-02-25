@@ -1,6 +1,7 @@
-{% extends 'base_loggedout.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<div class="big-box-container">
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -8,66 +9,71 @@
     {% endfor %}
 </ul>
 {% endif %}
-<div class="top-container">
-    <div class="top-main-text">
-        <div class="title-text">
-            Login
-        </div>
-        <div class="extra-text">
-            <a href="{% url 'signup' %}">Sign up</a>
-        </div>
-    </div>
-    <div class="description-text">
-        Sign in using your sleeper username or your email.
-    </div>
-</div>
-<div class="form-container">
-    <form method="post">
-        {% csrf_token %}
-        {% if form.username.errors %}
-        <div class="form-input-box error">
-        {% else %}
-        <div class="form-input-box">
-        {% endif %}
-            <label>username</label>
-            <div class="input-div">
-                {{ form.username }}
-            </div>
-            {% if form.username.errors %}
-            <div class="input-message">
-                {{ form.username.errors.0 }}
-            </div>
-            {% endif %}
-        </div>
-        {% if form.password.errors %}
-        <div class="form-input-box error">
-        {% else %}
-        <div class="form-input-box">
-        {% endif %}
-            <label>password</label>
-            <div class="input-div">
-                {{ form.password }}
-                <div class="password-toggle">
-                    <i class="fa fa-eye-slash" id="togglePassword"></i>
-                </div>
-            </div>
-            {% if form.password.errors %}
-            <div class="input-message">
-                {{ form.password.errors.0 }}
-            </div>
-            {% endif %}
-        </div>
-        <div class="bottom-container">
-            <button type="submit" class="full-button">Login</button>
-            <div style='flex-grow: 1;'>
-                
+    <div class="top-container">
+        <div class="top-main-text">
+            <div class="title-text">
+                Login
             </div>
             <div class="extra-text">
-                <a href="{% url 'reset_password' %}">Forgot password</a>
+                <a href="{% url 'signup' %}">Sign up</a>
             </div>
         </div>
-    </form>
+        <div class="description-text">
+            Sign in using your sleeper username or your email.
+        </div>
+    </div>
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            {% if form.username.errors %}
+            <div class="form-input-box error">
+            {% else %}
+            <div class="form-input-box">
+            {% endif %}
+                <label>username</label>
+                <div class="input-div">
+                    {{ form.username }}
+                </div>
+                {% if form.username.errors %}
+                <div class="input-message">
+                    {{ form.username.errors.0 }}
+                </div>
+                {% endif %}
+            </div>
+            {% if form.password.errors %}
+            <div class="form-input-box error">
+            {% else %}
+            <div class="form-input-box">
+            {% endif %}
+                <label>password</label>
+                <div class="input-div">
+                    {{ form.password }}
+                    <div class="password-toggle">
+                        <i class="fa fa-eye-slash" id="togglePassword"></i>
+                    </div>
+                </div>
+                {% if form.password.errors %}
+                <div class="input-message">
+                    {{ form.password.errors.0 }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="bottom-container">
+                <button type="submit" class="full-button">Login</button>
+                <div style='flex-grow: 1;'>
+                    
+                </div>
+                <div class="extra-text">
+                    <a href="{% url 'reset_password' %}">Forgot password</a>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/fa-eye.js' %}"></script>
 {% endblock %}

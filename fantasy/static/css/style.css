@@ -344,6 +344,43 @@ hr {
     text-decoration: none;
 }
 
+.navbar {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+  }
+
+.navbar-expand {
+flex-flow: row nowrap;
+justify-content: flex-start;
+}
+
+.topbar {
+    height: 4.375rem;
+    margin-bottom: 1.5rem !important;
+  }
+
+.topbar .topbar-divider {
+width: 0;
+border-right: 1px solid #e3e6f0;
+height: calc(4.375rem - 2rem);
+margin: auto 1rem;
+}
+
+.topnavbar-nav {
+    display: flex;
+    flex: 1;
+    text-align: left;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
 .navbar-nav {
     display: flex;
     flex-direction: column;
@@ -858,17 +895,33 @@ body.sidebar-toggled footer.sticky-footer {
     vertical-align: middle;
 }
 
-.text-league-header {
+.text-topnav-header {
     color: #b9c4d4;
     font-size: 16px;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
     margin-left: 8px;
     display: inline-flex;
-    flex-direction: column;
     justify-content: center;
-    text-align: center;
     vertical-align: middle;
+}
+
+.topnav-right-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0;
+}
+
+.topnav-left-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.topnav-right-element{
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .text-league-years {
@@ -1238,6 +1291,10 @@ a:visited {
     flex-direction: row;
     align-items: center;
 }
+
+.align-items-center {
+    align-items: center !important;
+  }
 
 /*! CSS Used fontfaces */
 @font-face {
