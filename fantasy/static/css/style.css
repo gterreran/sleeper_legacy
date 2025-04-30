@@ -1296,6 +1296,40 @@ a:visited {
     align-items: center !important;
   }
 
+.sleeper-user-dropdown {
+    position: relative;
+    display: block; /* Change to block for vertical layout */
+}
+
+.sleeper-user-leagues {
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sleeper-user-leagues li {
+    padding: 8px 12px;
+    text-decoration: none;
+    display: block;
+}
+
+.sleeper-user-trigger {
+    cursor: pointer;
+}
+
+.sleeper-user-dropdown.show .sleeper-user-leagues { /* Target leagues within .show */
+    display: block;
+}
+
+.sleeper-user-trigger i {
+    transition: transform 0.3s ease; /* Smooth arrow rotation */
+}
+
+.sleeper-user-dropdown.show .sleeper-user-trigger i {
+    transform: rotate(180deg); /* Rotate the arrow when showing */
+}
+
 /*! CSS Used fontfaces */
 @font-face {
     font-family: "Font Awesome 5 Free";

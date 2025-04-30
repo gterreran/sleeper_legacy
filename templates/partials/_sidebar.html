@@ -17,7 +17,19 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
+    <li class="nav-item">
+        {% for sleeper_user in sleeper_users %}
+            <div class="sleeper-user-dropdown">
+                <span class="sleeper-user-trigger">{{ sleeper_user.display_name }} <i class="fas fa-caret-down"></i></span>
+                <ul class="sleeper-user-leagues">
+                    {% for league in sleeper_user.leagues.all %}
+                        <li>{{ league }}</li>
+                    {% empty %}
+                        <li>No leagues associated</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
         <a class="nav-link" href="{% url 'add_sleeper_user' %}">
             <!-- <i class="fas fa-fw fa-tachometer-alt"></i> -->
              <i class="fas fa-fw fa-plus"></i>

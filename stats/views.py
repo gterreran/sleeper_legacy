@@ -1,4 +1,4 @@
-from stats.models import League, Season
+from stats.models import UserProfile, SleeperUser, League, Season
 from django.shortcuts import render, redirect
 from stats import TITLE, VERSION, AUTHOR
 from django.contrib.auth.decorators import login_required
@@ -32,14 +32,26 @@ def tables(request, league):
 
 @login_required
 def profile(request):
-    context = {'user':request.user}
-    return render(request, "stats/user.html", context)
+    return render(request, "stats/user.html", {})
 
 def add_sleeper_user(request):
     if request.method == 'POST':
-        form = NewSleeperUserForm(request.POST)
+        form = NewSleeperUserForm(request.POST, user=request.user)
         if form.is_valid():
-            print(form.cleaned_data.get("user_dict"))
+            user_dict = form.cleaned_data.get("user_dict")
+            if user_dict['new_user']:
+                sleeper_user = SleeperUser.objects.create(
+                    sleeper_username = user_dict["username"],
+                    display_name = user_dict["display_name"],
+                    sleeper_userid = user_dict["user_id"],
+                    avatar = user_dict["avatar"]
+                    )
+            else:
+                sleeper_user = user_dict["sleeper_user"]
+            user_profile = UserProfile.objects.get(user=request.user)
+            user_profile.sleeperusers.add(sleeper_user)
+                
+                
             return redirect('profile')
         else:
             messages.error(request, 'Something went wrong')

@@ -1,13 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+'''
+-A UserProfile can contain multiple SleeperUser instances (e.g. Sleeper accounts)
+
+-A SleeperUser can have multiple SleeperPresident instances (e.g different teams managed under a unique Sleeper account)
+
+-A League will have multiple SleeperPresident instances
+
+-A League will also have multiple Seasons instances
+
+-Each Season will have multiple Rosters instances
+
+-Each Roster will have one SleeperPresident instance
+
+'''
 
 class League(models.Model):
-    nickname = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     avatar = models.CharField(max_length=200)
     most_recent_year = models.IntegerField(default=0)
+    custom_name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.nickname
@@ -18,6 +31,7 @@ class Season(models.Model):
     season_id = models.CharField(max_length=25)
     name = models.CharField(max_length=200)
     year = models.IntegerField()
+    avatar = models.CharField(max_length=200)
     playoff_week_start = models.IntegerField()
     playoffs_added = models.BooleanField(default=False)
     winner = models.CharField(max_length=25)
@@ -27,45 +41,62 @@ class Season(models.Model):
 
 
 class SleeperUser(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     sleeper_username = models.CharField(max_length=25)
+    display_name = models.CharField(max_length=25)
     sleeper_userid = models.CharField(max_length=25)
-    league = models.ForeignKey(League, on_delete=models.CASCADE)
-    seasons = models.ManyToManyField(Season)
-    person = models.CharField(max_length=200)
-    total_points_rs = models.FloatField()
-    total_wins_rs = models.IntegerField()
-    total_losses_rs = models.IntegerField()
-    total_points_po = models.FloatField()
-    total_wins_po = models.IntegerField()
-    total_losses_po = models.IntegerField()
-    highest_scorer = models.IntegerField()
-    lowest_scorer = models.IntegerField()
-    highest_score = models.FloatField()
-    highest_score_year = models.IntegerField(null=True)
-    highest_score_week = models.IntegerField(null=True)
-    lowest_score = models.FloatField()
-    lowest_score_year = models.IntegerField(null=True)
-    lowest_score_week = models.IntegerField(null=True)
-    luck_factor = models.FloatField()
-    winners_bracket = models.IntegerField(null=True)
-    losers_bracket = models.IntegerField()
-    champion = models.IntegerField()
-    losers_bracket_champion = models.IntegerField()
+    avatar = models.CharField(max_length=200)
+    leagues = models.ManyToManyField(League)
 
     def __str__(self):
-        return self.person
+        return self.sleeper_username
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    sleeperusers = models.ManyToManyField(SleeperUser)
+
+
+class SleeperPresident(models.Model):
+    league = models.ForeignKey(League, on_delete=models.CASCADE)
+    total_points_rs = models.FloatField(default=0)
+    total_wins_rs = models.IntegerField(default=0)
+    total_losses_rs = models.IntegerField(default=0)
+    total_points_po = models.FloatField(default=0)
+    total_wins_po = models.IntegerField(default=0)
+    total_losses_po = models.IntegerField(default=0)
+    highest_scorer = models.IntegerField(default=0)
+    lowest_scorer = models.IntegerField(default=0)
+    highest_score = models.FloatField(default=0)
+    highest_score_year = models.IntegerField(null=True)
+    highest_score_week = models.IntegerField(null=True)
+    lowest_score = models.FloatField(default=0)
+    lowest_score_year = models.IntegerField(null=True)
+    lowest_score_week = models.IntegerField(null=True)
+    luck_factor = models.FloatField(default=0)
+    winners_bracket = models.IntegerField(default=0)
+    losers_bracket = models.IntegerField(default=0)
+    champion = models.IntegerField(default=0)
+    losers_bracket_champion = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.sleeper_user.sleeper_username 
 
 
 class Roster(models.Model):
+    sleeper_president = models.ForeignKey(SleeperPresident, on_delete=models.CASCADE)
     season = models.ForeignKey(Season, on_delete=models.CASCADE)
     roster_id = models.CharField(max_length=25)
-    sleeperuser = models.ForeignKey(SleeperUser, on_delete=models.CASCADE)
-
-
-class Username(models.Model):
-    sleeperuser = models.ForeignKey(SleeperUser, on_delete=models.CASCADE)
-    username = models.CharField(max_length=200)
+    total_points_rs = models.FloatField(default=0)
+    total_wins_rs = models.IntegerField(default=0)
+    total_losses_rs = models.IntegerField(default=0)
+    total_points_po = models.FloatField(default=0)
+    total_wins_po = models.IntegerField(default=0)
+    total_losses_po = models.IntegerField(default=0)
+    highest_scorer = models.IntegerField(default=0)
+    lowest_scorer = models.IntegerField(default=0)
+    highest_score = models.FloatField(default=0)
+    lowest_score = models.FloatField(default=0)
+    luck_factor = models.FloatField(default=0)
 
 
 class Matchup(models.Model):
